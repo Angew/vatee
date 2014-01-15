@@ -7,19 +7,11 @@ Distributed under the Boost Software License, Version 1.0.
 #pragma once
 
 
-#include "config.hpp"
+#include <cassert>
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <string>
 
 
-namespace Vatee {
-
-class Generator
-{
-	Config config;
-
-public:
-	explicit Generator(Config config);
-
-	void run();
-};
-
-}	//namespace Vatee
+using std::size_t;
