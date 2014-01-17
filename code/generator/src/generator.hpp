@@ -19,6 +19,8 @@ class Generator
 	Config config;
 	FileWriter writer;
 
+	void generatePack(size_t idxPack, const std::string &packName);
+
 public:
 	explicit Generator(Config config);
 

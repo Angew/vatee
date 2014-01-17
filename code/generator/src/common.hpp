@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <fstream>
 #include <functional>
 #include <memory>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 

@@ -18,7 +18,11 @@ Generator::Generator(Config config)
 //--------------------------------------------------------------------------------------------------
 void Generator::run()
 {
-
+	for (size_t idxPack = 0, idxMax = config.getMaxPackNumber(); idxPack <= idxMax; ++idxPack) {
+		std::ostringstream s;
+		s << '_' << idxPack;
+		generatePack(idxPack, s.str());
+	}
 }
 
 }	//namespace Vatee
