@@ -13,6 +13,7 @@ namespace Vatee {
 
 Generator::Generator(Config config)
 	: config(std::move(config))
+	, writer(this->config)
 {}
 //--------------------------------------------------------------------------------------------------
 void Generator::run()

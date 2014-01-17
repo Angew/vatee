@@ -14,23 +14,23 @@ class Config
 public:
 	enum NewlineStyle
 	{
-		Newline_Any
+		Newline_Unspecified
 		, Newline_Lf
 		, Newline_Cr
 		, Newline_CrLf
 	};
 
-	std::string getSourceDir() const;
-
 	std::string getDestDir() const;
 
-	NewlineStyle getNewlineInput() const;
+	NewlineStyle getNewlineStyle() const;
 
-	NewlineStyle getNewlineOutput() const;
+	size_t getMaxExpandComponents() const;
 
 	size_t getMaxArity() const;
 
 	size_t getMaxPackNumber() const;
+
+	size_t getIndentSpaceCount() const;
 };
 
 }	//namespace Vatee

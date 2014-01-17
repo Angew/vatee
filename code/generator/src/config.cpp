@@ -11,22 +11,12 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
-std::string Config::getSourceDir() const
-{
-	return VATEE_GENERATOR_DEFAULT_SOURCE_DIR;
-}
-//--------------------------------------------------------------------------------------------------
 std::string Config::getDestDir() const
 {
 	return VATEE_GENERATOR_DEFAULT_DEST_DIR;
 }
 //--------------------------------------------------------------------------------------------------
-Config::NewlineStyle Config::getNewlineInput() const
-{
-	return Newline_Any;
-}
-//--------------------------------------------------------------------------------------------------
-Config::NewlineStyle Config::getNewlineOutput() const
+Config::NewlineStyle Config::getNewlineStyle() const
 {
 #ifdef _WIN32
 	return Newline_CrLf;
@@ -35,12 +25,22 @@ Config::NewlineStyle Config::getNewlineOutput() const
 #endif
 }
 //--------------------------------------------------------------------------------------------------
+size_t Config::getMaxExpandComponents() const
+{
+	return 5;
+}
+//--------------------------------------------------------------------------------------------------
 size_t Config::getMaxArity() const
 {
 	return 10;
 }
 //--------------------------------------------------------------------------------------------------
 size_t Config::getMaxPackNumber() const
+{
+	return 0;
+}
+//--------------------------------------------------------------------------------------------------
+size_t Config::getIndentSpaceCount() const
 {
 	return 0;
 }

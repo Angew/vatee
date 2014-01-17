@@ -11,88 +11,98 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-//
-// Class TextParser
-//
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-class TextParser
-{
-public:
-	virtual ~TextParser() {}
+namespace {
 
-	static std::unique_ptr<TextParser> create(Config::NewlineStyle newlineStyle);
-
-	bool getLine(std::string &line, std::string &newline);
-};
-//--------------------------------------------------------------------------------------------------
-// Class FixedNewlineParser
-//--------------------------------------------------------------------------------------------------
-class FixedNewlineParser : public TextParser
+std::string computeIndentString(size_t spaceCount)
 {
-	std::string newline;
-public:
-	explicit FixedNewlineParser(std::string newline) : newline(newline) {}
-};
-//--------------------------------------------------------------------------------------------------
-// Class AnyNewlineParser
-//--------------------------------------------------------------------------------------------------
-class AnyNewlineParser : public TextParser
-{
-};
-//--------------------------------------------------------------------------------------------------
-// Construction
-//--------------------------------------------------------------------------------------------------
-/*static*/ std::unique_ptr<TextParser> TextParser::create(Config::NewlineStyle newlineStyle)
-{
-	switch (newlineStyle)
-	{
-		case Config::Newline_Any:
-			return std::unique_ptr<TextParser>(new AnyNewlineParser());
-		case Config::Newline_Cr:
-			return std::unique_ptr<TextParser>(new FixedNewlineParser("\r"));
-		case Config::Newline_Lf:
-			return std::unique_ptr<TextParser>(new FixedNewlineParser("\n"));
-		case Config::Newline_CrLf:
-			return std::unique_ptr<TextParser>(new FixedNewlineParser("\r\n"));
-		default:
-			throw std::invalid_argument("Bad value of Vatee::Config::NewlineStyle");
+	if (spaceCount == 0) {
+		return "\t";
+	} else {
+		return std::string(spaceCount, ' ');
 	}
 }
 
 
+std::string computeNewlineString(Config::NewlineStyle style)
+{
+	switch (style) {
+		case Config::Newline_Lf:
+			return "\n";
+		case Config::Newline_Cr:
+			return "\r";
+		case Config::Newline_CrLf:
+			return "\r\n";
+		NO_DEFAULT()
+	}
+}
 
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-//
-// Class FileText
-//
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-// Construction
-//--------------------------------------------------------------------------------------------------
-FileText::FileText(Config::NewlineStyle newlineInput, Config::NewlineStyle newlineOutput)
-	:	parser(TextParser::create(newlineInput))
-	, convertNewline([=]() -> std::function<std::string (const std::string&)> {
-		static const std::string cr("\r");
-		static const std::string lf("\n");
-		static const std::string crlf("\r\n");
-		switch (newlineOutput)
-		{
-			case Config::Newline_Any:
-				return [](const std::string &nl) { return nl; };
-			case Config::Newline_Cr:
-				return [&](const std::string &) { return cr; };
-			case Config::Newline_Lf:
-				return [&](const std::string &) { return lf; };
-			case Config::Newline_CrLf:
-				return [&](const std::string &) { return crlf; };
-			default:
-				throw std::invalid_argument("Bad value of Vatee::Config::NewlineStyle");
-		}
-	}())
+}	//namespace
+
+
+struct FileWriter::Controller
+{
+	void (FileWriter::*operation)();
+
+	Controller(void (FileWriter::*operation)()) : operation(operation) {}
+};
+
+
+namespace FileWriterControllers {
+
+const FileWriter::Controller
+	indent(&FileWriter::writeIndent)
+	, nl(&FileWriter::writeNewline)
+	, tab(&FileWriter::increaseIndent)
+	, untab(&FileWriter::decreaseIndent)
+;
+
+}	//namespace FileWriterControllers
+
+
+FileWriter::FileWriter(const Config &config)
+	: directory(config.getDestDir() + "/")
+	, oneIndent(computeIndentString(config.getIndentSpaceCount()))
+	, newline(computeNewlineString(config.getNewlineStyle()))
 {}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::open(const std::string &fileName)
+{
+	auto fullPath = directory + fileName;
+	file.open(fullPath, std::ios::binary);
+	if (!file)
+		throw std::ios_base::failure("Error opening " + fullPath);
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::close()
+{
+	file.close();
+}
+//--------------------------------------------------------------------------------------------------
+template <>
+void FileWriter::write(const Controller &controller)
+{
+	(this->*(controller.operation))();
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::writeIndent()
+{
+	file << currentIndent;
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::writeNewline()
+{
+	file << newline;
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::increaseIndent()
+{
+	currentIndent += oneIndent;
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::decreaseIndent()
+{
+	assert(currentIndent.size() >= oneIndent.size());
+	currentIndent.erase(currentIndent.end() - oneIndent.size(), currentIndent.end());
+}
 
 }	//namespace Vatee

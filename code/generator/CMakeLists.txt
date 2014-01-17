@@ -2,13 +2,13 @@
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file ../../LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-find_package(Boost REQUIRED)
+# find_package(Boost REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIRS})
+# include_directories(${Boost_INCLUDE_DIRS})
 
 if(MSVC)
-	add_compile_options(/Yucommon.hpp /W4 /WX)
-	add_definitions(-DVATEE_GENERATOR_DEFAULT_SOURCE_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\" -DVATEE_GENERATOR_DEFAULT_DEST_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
+	add_compile_options(/Yucommon.hpp /W4 /WX /wd4355)
+	add_definitions(-DVATEE_GENERATOR_DEFAULT_DEST_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
 	set_property(SOURCE src/common.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " /Yccommon.hpp")
 endif()
 

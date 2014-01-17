@@ -12,34 +12,59 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
-class TextParser;
-
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
 //
-// Class FileText
+// Class FileWriter
 //
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-class FileText
+class FileWriter
 {
-	std::unique_ptr<TextParser> parser;
-	std::function<std::string (const std::string&)> convertNewline;
+	std::ofstream file;
+	std::string directory;
+	std::string oneIndent, currentIndent, newline;
 
 public:
-	FileText(Config::NewlineStyle newlineInput, Config::NewlineStyle newlineOutput);
+	struct Controller;
 
-	void openInFile(const std::string &fileName);
+	explicit FileWriter(const Config &config);
 
-	void openOutFile(const std::string &fileName);
+	void open(const std::string &fileName);
 
-	void closeInFile();
+	void close();
 
-	void closeOutFile();
+	template <class T_Arg>
+	void write(T_Arg &&arg)
+	{
+		file << std::forward<T_Arg>(arg);
+	}
 
-	bool getLine(std::string &line);
+	void writeIndent();
 
-	void putLine(std::string line);
+	void writeNewline();
+
+	void increaseIndent();
+
+	void decreaseIndent();
 };
+
+template <>
+void FileWriter::write(const Controller &controller);
+
+
+namespace FileWriterControllers {
+
+extern const FileWriter::Controller indent, nl, tab, untab;
+
+}	//namespace FileWriterControllers
+
+
+template <class T_Arg>
+FileWriter& operator<< (FileWriter &writer, T_Arg &&arg)
+{
+	writer.write(std::forward<T_Arg>(arg));
+	return writer;
+}
 
 }	//namespace Vatee
