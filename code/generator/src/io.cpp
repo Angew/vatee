@@ -67,8 +67,8 @@ FileWriter::FileWriter(const Config &config)
 //--------------------------------------------------------------------------------------------------
 void FileWriter::open(const std::string &fileName)
 {
-	auto fullPath = directory + fileName;
-	file.open(fullPath, std::ios::binary);
+	std::string fullPath = directory + fileName;
+	file.open(fullPath.c_str(), std::ios::binary);
 	if (!file)
 		throw std::ios_base::failure("Error opening " + fullPath);
 }

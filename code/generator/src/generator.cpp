@@ -12,7 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 namespace Vatee {
 
 Generator::Generator(Config config)
-	: config(std::move(config))
+	: config(config)
 	, writer(this->config)
 {}
 //--------------------------------------------------------------------------------------------------

@@ -35,9 +35,9 @@ public:
 	void close();
 
 	template <class T_Arg>
-	void write(T_Arg &&arg)
+	void write(const T_Arg &arg)
 	{
-		file << std::forward<T_Arg>(arg);
+		file << arg;
 	}
 
 	void writeIndent();
@@ -61,9 +61,9 @@ extern const FileWriter::Controller indent, nl, tab, untab;
 
 
 template <class T_Arg>
-FileWriter& operator<< (FileWriter &writer, T_Arg &&arg)
+FileWriter& operator<< (FileWriter &writer, const T_Arg &arg)
 {
-	writer.write(std::forward<T_Arg>(arg));
+	writer.write(arg);
 	return writer;
 }
 
