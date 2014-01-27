@@ -15,8 +15,8 @@ const T& as(const U &a)
 
 
 #define VATEE_VARIADIC \
-	template <class T VATEE_EXPAND_TRAILING_AFTER_1(class T)> \
-	void print(const T &a VATEE_EXPAND_TRAILING_AFTER_2(const T, &a)) { \
+	template <class T VATEE_TRAILING_EXPAND_AFTER_1(class T)> \
+	void print(const T &a VATEE_TRAILING_EXPAND_AFTER_2(const T, &a)) { \
 		std::cout << a << '\n'; \
 		VATEE_IF_VARIADIC(print(VATEE_EXPAND_AFTER_1(a));) \
 	}
@@ -27,7 +27,7 @@ const T& as(const U &a)
 	VATEE_TEMPLATE(class T) \
 	void test(VATEE_EXPAND_AFTER_2(const T, &a)) { \
 		print(VATEE_EXPAND_AFTER_1(a)); \
-		print(VATEE_EXPAND_BETWEEN_3(as<T, >VATEE_LPAREN, VATEE_RPAREN)); \
+		print(VATEE_EXPAND_BETWEEN_3(as<T, >VATEE_LPAREN a, VATEE_RPAREN)); \
 	}
 #include VATEE_EMULATE()
 
