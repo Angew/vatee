@@ -14,4 +14,7 @@ endif()
 set(INSTALL_CMAKE_DIR ${defInstallCmakeDir} CACHE PATH "Installation directory for CMake files")
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for binaries")
 
+enable_testing()
+option(BUILD_TESTING "Generate tests" ON)
+
 add_subdirectory(code)
