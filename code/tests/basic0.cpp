@@ -15,6 +15,10 @@ const T& as(const U &a)
 { return a; }
 
 
+void print()
+{}
+
+
 #define VATEE_VARIADIC \
 	template <class T VATEE_TRAILING_EXPAND_0_AFTER_1(class T)> \
 	void print(const T &a VATEE_TRAILING_EXPAND_0_AFTER_2(const T, &a)) { \
@@ -24,6 +28,7 @@ const T& as(const U &a)
 #include VATEE_EMULATE_0()
 
 
+#
 #define VATEE_VARIADIC \
 	VATEE_TEMPLATE_0(class T) \
 	void test(VATEE_EXPAND_0_AFTER_2(const T, &a)) { \

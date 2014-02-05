@@ -33,5 +33,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #define VATEE_TEMPLATE_0(vatee_arg0) \
 	VATEE_IF_NONEMPTY_0(template <) VATEE_INTERNAL_EXPAND_MACRO(VATEE_PACKSIZE_0, 2) (vatee_arg0, VATEE_INTERNAL_EMPTY) VATEE_IF_NONEMPTY_0(>)
+	
+#define VATEE_EMULATE_0() "vatee/internal/emulate0.hpp"
 
 #endif	//VATEE_GUARD_PACK0

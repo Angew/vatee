@@ -23,10 +23,10 @@ Distributed under the Boost Software License, Version 1.0.
 
 #define VATEE_INTERNAL_CALL_LATER() ()
 
-#define VATEE_INTERNAL_LPAREN (
+#define VATEE_INTERNAL_LPAREN() (
 
-#define VATEE_INTERNAL_RPAREN )
+#define VATEE_INTERNAL_RPAREN() )
 
-#define VATEE_INTERNAL_COMMA ,
+#define VATEE_INTERNAL_COMMA() ,
 
 #endif	//VATEE_GUARD_PUNCTUATION

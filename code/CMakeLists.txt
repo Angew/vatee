@@ -3,4 +3,7 @@
 # (See accompanying file ../LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 add_subdirectory(generator)
-#add_subdirectory(tests)
+
+if(BUILD_TESTING)
+	add_subdirectory(tests)
+endif()
