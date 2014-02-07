@@ -28,7 +28,6 @@ void print()
 #include VATEE_EMULATE_0()
 
 
-#
 #define VATEE_VARIADIC \
 	VATEE_TEMPLATE_0(class T) \
 	void test(VATEE_EXPAND_0_AFTER_2(const T, &a)) { \
