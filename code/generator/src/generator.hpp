@@ -19,7 +19,14 @@ class Generator
 	Config config;
 	FileWriter writer;
 
+	enum HeaderType
+	{
+		Internal, Public
+	};
+
 	void generatePack(size_t idxPack, const std::string &packName);
+
+	void writeFileHeader();
 
 public:
 	explicit Generator(Config config);

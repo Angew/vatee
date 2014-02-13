@@ -54,6 +54,7 @@ const FileWriter::Controller
 	, nl(&FileWriter::writeNewline)
 	, tab(&FileWriter::increaseIndent)
 	, untab(&FileWriter::decreaseIndent)
+	, mle(&FileWriter::writeMacroLineEnd)
 ;
 
 }	//namespace FileWriterControllers
@@ -103,6 +104,11 @@ void FileWriter::decreaseIndent()
 {
 	assert(currentIndent.size() >= oneIndent.size());
 	currentIndent.erase(currentIndent.end() - oneIndent.size(), currentIndent.end());
+}
+//--------------------------------------------------------------------------------------------------
+void FileWriter::writeMacroLineEnd()
+{
+	file << " \\" << newline;
 }
 
 }	//namespace Vatee

@@ -47,6 +47,8 @@ public:
 	void increaseIndent();
 
 	void decreaseIndent();
+
+	void writeMacroLineEnd();
 };
 
 template <>
@@ -55,7 +57,7 @@ void FileWriter::write(const Controller &controller);
 
 namespace FileWriterControllers {
 
-extern const FileWriter::Controller indent, nl, tab, untab;
+extern const FileWriter::Controller indent, nl, tab, untab, mle;
 
 }	//namespace FileWriterControllers
 
