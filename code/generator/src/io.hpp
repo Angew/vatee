@@ -30,7 +30,7 @@ public:
 
 	explicit FileWriter(const Config &config);
 
-	void open(const std::string &fileName);
+	void open(const std::string &fileName, const std::string &subDirectory = std::string());
 
 	void close();
 

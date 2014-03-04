@@ -66,9 +66,14 @@ FileWriter::FileWriter(const Config &config)
 	, newline(computeNewlineString(config.getNewlineStyle()))
 {}
 //--------------------------------------------------------------------------------------------------
-void FileWriter::open(const std::string &fileName)
+void FileWriter::open(const std::string &fileName, const std::string &subDirectory)
 {
-	std::string fullPath = directory + fileName;
+	std::ostringstream pathConstructor;
+	pathConstructor << directory;
+	if (!subDirectory.empty())
+		pathConstructor << subDirectory << '/';
+	pathConstructor << fileName;
+	std::string fullPath = pathConstructor.str();
 	file.open(fullPath.c_str(), std::ios::binary);
 	if (!file)
 		throw std::ios_base::failure("Error opening " + fullPath);
