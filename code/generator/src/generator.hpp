@@ -28,9 +28,11 @@ class Generator
 
 	void generatePackPublic(size_t idxPack, const std::string &packName);
 
+	void generatePackInternal(size_t idxPack, const std::string &packName);
+
 	void writeFileHeader();
 
-	void writeIncludeGuard(std::string headerName);
+	void writeIncludeGuard(std::string headerName, std::string scope = std::string());
 
 	void writeInclude(HeaderType headerType, const std::string &headerName);
 

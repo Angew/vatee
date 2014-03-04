@@ -14,6 +14,7 @@ namespace Vatee {
 void Generator::generatePack(size_t idxPack, const std::string &packName)
 {
 	generatePackPublic(idxPack, packName);
+	generatePackInternal(idxPack, packName);
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
@@ -41,6 +42,23 @@ void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
 	writeIncludeGuardEnd();
 }
 //--------------------------------------------------------------------------------------------------
+void Generator::generatePackInternal(size_t idxPack, const std::string &packName)
+{
+	using namespace FileWriterControllers;
+	std::ostringstream header;
+	header << "emulate";
+	if (!packName.empty()) {
+		header << idxPack;
+	}
+	header << ".hpp";
+	std::string headerName = header.str();
+	writer.open(headerName, "internal");
+	writeFileHeader();
+	writeIncludeGuard(headerName, "INTERNAL");
+
+	writeIncludeGuardEnd();
+}
+//--------------------------------------------------------------------------------------------------
 void Generator::writeFileHeader()
 {
 	using namespace FileWriterControllers;
@@ -54,7 +72,7 @@ void Generator::writeFileHeader()
 	;
 }
 //--------------------------------------------------------------------------------------------------
-void Generator::writeIncludeGuard(std::string headerName)
+void Generator::writeIncludeGuard(std::string headerName, std::string scope)
 {
 	using namespace FileWriterControllers;
 	size_t idxPeriod = headerName.find('.');
@@ -65,9 +83,11 @@ void Generator::writeIncludeGuard(std::string headerName)
 	assert(!headerName.empty());
 	const std::ctype<char> &ctype = std::use_facet<std::ctype<char>>(std::locale::classic());
 	ctype.toupper(&headerName[0], &headerName[0] + headerName.size());
+	if (!scope.empty())
+		scope.append("_");
 	writer
-		<< "#ifndef VATEE_GUARD_" << headerName << nl
-		<< "#define VATEE_GUARD_" << headerName << nl
+		<< "#ifndef VATEE_GUARD_" << scope << headerName << nl
+		<< "#define VATEE_GUARD_" << scope << headerName << nl
 		<< nl
 	;
 }
