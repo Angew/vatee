@@ -72,11 +72,18 @@ void FileWriter::open(const std::string &fileName, const std::string &subDirecto
 	pathConstructor << directory;
 	if (!subDirectory.empty())
 		pathConstructor << subDirectory << '/';
+	{
+		auto dirName = pathConstructor.str();
+		if (!makeDirectory(dirName)) {
+			throw std::ios_base::failure("Error creating directory " + dirName);
+		}
+	}
 	pathConstructor << fileName;
 	std::string fullPath = pathConstructor.str();
 	file.open(fullPath.c_str(), std::ios::binary);
-	if (!file)
+	if (!file) {
 		throw std::ios_base::failure("Error opening " + fullPath);
+	}
 }
 //--------------------------------------------------------------------------------------------------
 void FileWriter::close()
