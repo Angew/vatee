@@ -48,14 +48,14 @@ class Generator
 
 	void writeExpandMacro(
 		const std::string &macroName
-		, size_t arity
+		, size_t components
 		, const std::string &packName
 		, const std::string &valuePrefix
 		, bool after
 	);
 
 	void writeExpandMacroCore(
-		size_t arity
+		size_t components
 		, const std::string &packName
 		, bool after
 	);
@@ -65,6 +65,10 @@ class Generator
 	void writeMacro_Emulate(const std::string &packName);
 
 	void writeIncludeGuardEnd();
+
+	void writeEmulation(const std::string &packName);
+
+	void writeOneEmulation(const std::string &packName, size_t packSize);
 
 public:
 	explicit Generator(Config config);

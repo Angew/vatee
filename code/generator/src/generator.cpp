@@ -40,6 +40,7 @@ void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
 	writer << nl;
 	writeMacro_Emulate(packName);
 	writeIncludeGuardEnd();
+	writer.close();
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::generatePackInternal(size_t idxPack, const std::string &packName)
@@ -54,9 +55,8 @@ void Generator::generatePackInternal(size_t idxPack, const std::string &packName
 	std::string headerName = header.str();
 	writer.open(headerName, "internal");
 	writeFileHeader();
-	writeIncludeGuard(headerName, "INTERNAL");
-
-	writeIncludeGuardEnd();
+	writeEmulation(packName);
+	writer.close();
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::writeFileHeader()
@@ -138,41 +138,41 @@ void Generator::writeConfiguredExpandMacros(
 	std::ostringstream macroNameGen;
 	macroNameGen << "VATEE_" << namePrefix << "EXPAND" << packName << '_' << nameKind;
 	std::string macroName = macroNameGen.str();
-	for (size_t arity = (after ? 1 : 2); arity <= config.getMaxArity(); ++arity) {
-		writeExpandMacro(macroName, arity, packName, valuePrefix, after);
+	for (size_t components = (after ? 1 : 2); components <= config.getMaxExpandComponents(); ++components) {
+		writeExpandMacro(macroName, components, packName, valuePrefix, after);
 		writer << nl;
 	}
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::writeExpandMacro(
 	const std::string &macroName
-	, const size_t arity
+	, const size_t components
 	, const std::string &packName
 	, const std::string &valuePrefix
 	, const bool after
 )
 {
 	using namespace FileWriterControllers;
-	writer << "#define " << macroName << '_' << arity << "(vatee_arg0";
-	for (size_t arg = 1; arg < arity; ++arg) {
+	writer << "#define " << macroName << '_' << components << "(vatee_arg0";
+	for (size_t arg = 1; arg < components; ++arg) {
 		writer << ", vatee_arg" << arg;
 	}
 	writer << ')' << mle << tab;
 	writer << indent << valuePrefix;
-	writeExpandMacroCore(arity, packName, after);
+	writeExpandMacroCore(components, packName, after);
 	writer << nl << untab;
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::writeExpandMacroCore(
-	const size_t arity
+	const size_t components
 	, const std::string &packName
 	, const bool after
 )
 {
 	writer << "VATEE_INTERNAL_EXPAND_MACRO(VATEE_PACKSIZE" << packName
-		<< ", " << arity + (after ? 1 : 0) << ") (vatee_arg0"
+		<< ", " << components + (after ? 1 : 0) << ") (vatee_arg0"
 	;
-	for (size_t arg = 1; arg < arity; ++arg) {
+	for (size_t arg = 1; arg < components; ++arg) {
 		writer << ", vatee_arg" << arg;
 	}
 	if (after) {
@@ -206,6 +206,38 @@ void Generator::writeIncludeGuardEnd()
 {
 	using namespace FileWriterControllers;
 	writer << nl << "#endif" << nl;
+}
+//--------------------------------------------------------------------------------------------------
+void Generator::writeEmulation(const std::string &packName)
+{
+	using namespace FileWriterControllers;
+	for (size_t packSize = 0; packSize <= config.getMaxArity(); ++packSize) {
+		writeOneEmulation(packName, packSize);
+	}
+	writer << "#undef VATEE_EMULATION" << nl;
+}
+//--------------------------------------------------------------------------------------------------
+void Generator::writeOneEmulation(const std::string &packName, size_t packSize)
+{
+	using namespace FileWriterControllers;
+	writer << "#define VATEE_IF_NONEMPTY" << packName;
+	if (packSize > 0) {
+		writer << " __VA_ARGS__";
+	}
+	writer << nl;
+	writer << "#define VATEE_NONEMPTY" << packName << "_COMMA";
+	if (packSize > 0) {
+		writer << ",";
+	}
+	writer << nl;
+	writer << "#define VATEE_PACKSIZE" << packName << ' ' << packSize << nl;
+	writer << nl << "VATEE_EMULATION" << nl << nl;
+	writer
+		<< "#undef VATEE_IF_NONEMPTY" << packName << nl
+		<< "#undef VATEE_NONEMPTY" << packName << "_COMMA" << nl
+		<< "#undef VATEE_PACKSIZE" << packName << nl
+		<< nl
+	;
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
