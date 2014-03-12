@@ -12,14 +12,26 @@ if(MSVC)
 	set_property(SOURCE src/common.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " /Yccommon.hpp")
 endif()
 
+if(WIN32)
+	set(OsSuffix -win)
+	add_definitions(-DOS_WIN -D_UNICODE)
+else()
+	set(OsSuffix -posix)
+	add_definitions(-DOS_POSIX)
+endif()
+
 add_executable(generate_vatee
 	src/common.hpp
 	src/common.cpp
 	src/config.hpp
 	src/config.cpp
+	src/filesystem.hpp
+	src/filesystem${OsSuffix}.cpp
 	src/generator.hpp
 	src/generator.cpp
 	src/io.hpp
 	src/io.cpp
 	src/main.cpp
+	src/os.hpp
+	src/os${OsSuffix}.cpp
 )
