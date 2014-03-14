@@ -18,25 +18,46 @@ namespace Vatee {
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
 //
-// Directory operations
+// Helpers
 //
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-bool makeDirectory(OsString directory)
+std::wstring getFullPath(std::wstring path)
 {
-	std::replace(directory.begin(), directory.end(), L'/', L'\\');
+	std::replace(path.begin(), path.end(), L'/', L'\\');
+	const size_t maxPathLength = 32767;
 	{
-		wchar_t *buffer = _wfullpath(NULL, directory.c_str(), 32767);
+		wchar_t *buffer = _wfullpath(NULL, path.c_str(), maxPathLength);
+		if (!buffer) {
+			return std::wstring();
+		}
 		try {
-			directory = buffer;
+			path = buffer;
 		} catch (...) {
 			free(buffer);
 			throw;
 		}
 		free(buffer);
 	}
-	size_t idxSep;
+	return path;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+//
+// Directory operations
+//
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+bool makeDirectory(OsString directory)
+{
+	directory = getFullPath(directory);
+	if (directory.empty()) {
+		return false;
+	}
 	assert(directory.size() >= 2);
+	size_t idxSep;
 	if (directory[1] == L':') {
 		idxSep = directory.find(L'\\', 3);
 	} else {
@@ -47,17 +68,43 @@ bool makeDirectory(OsString directory)
 		}
 		idxSep = directory.find(L'\\', idxSep + 1);
 	}
-	if (idxSep == directory.npos)
-		return false;
-	directory = L"\\\\?\\" + directory;
-	idxSep += 4;
-	do {
-		directory[idxSep] = 0;
+	const std::wstring utfPrefix(L"\\\\?\\");
+	directory = utfPrefix + directory;
+	idxSep += utfPrefix.size();
+	std::vector<size_t> separators;
+	while (idxSep != directory.npos) {
+		separators.push_back(idxSep);
+		idxSep = directory.find(L'\\', idxSep + 1);
+	}
+	if (separators.back() == directory.size() - 1) {
+		separators.pop_back();
+	}
+	size_t retries = 0;
+	const size_t maxRetries = 5;
+	for (std::vector<size_t>::const_iterator itSep = separators.begin(); itSep != separators.end();) {
+		directory[*itSep] = 0;
 		bool ok = !!CreateDirectoryW(directory.c_str(), NULL);
 		if (!ok) {
-			
+			switch (GetLastError()) {
+				case ERROR_ALREADY_EXISTS:
+					ok = true;
+					break;
+				case ERROR_PATH_NOT_FOUND:
+					if (++retries > maxRetries) {
+						return false;
+					}
+					assert(itSep != separators.begin());
+					--itSep;
+					break;
+				default:
+					return false;
+			}
 		}
-	} while(idxSep != directory.npos);
+		if (ok) {
+			directory[*itSep++] = L'\\';
+		}
+	}
+	return true;
 }
 
 }	// namespace Vatee

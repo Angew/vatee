@@ -6,6 +6,7 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include "common.hpp"
 
+#include "filesystem.hpp"
 #include "io.hpp"
 
 

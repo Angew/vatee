@@ -17,6 +17,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 
 using std::size_t;
