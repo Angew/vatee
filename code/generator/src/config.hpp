@@ -6,11 +6,14 @@ Distributed under the Boost Software License, Version 1.0.
 
 #pragma once
 
+#include "os.hpp"
+
 
 namespace Vatee {
 
 class Config
 {
+	Os::String destDir;
 public:
 	enum NewlineStyle
 	{
@@ -20,7 +23,9 @@ public:
 		, Newline_CrLf
 	};
 
-	std::string getDestDir() const;
+	Config();
+
+	Os::String getDestDir() const;
 
 	NewlineStyle getNewlineStyle() const;
 

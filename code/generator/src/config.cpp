@@ -11,14 +11,18 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
-std::string Config::getDestDir() const
+Config::Config()
+	: destDir(Os::getProgramDir())
+{}
+//--------------------------------------------------------------------------------------------------
+Os::String Config::getDestDir() const
 {
-	return VATEE_GENERATOR_DEFAULT_DEST_DIR;
+	return destDir;
 }
 //--------------------------------------------------------------------------------------------------
 Config::NewlineStyle Config::getNewlineStyle() const
 {
-#ifdef _WIN32
+#ifdef OS_WIN
 	return Newline_CrLf;
 #else
 	return Newline_Lf;

@@ -9,17 +9,24 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
+namespace Os {
+
 #ifdef OS_WIN
-typedef wchar_t OsChar;
+typedef wchar_t Char;
 
-#define OS_LIT(x) L##x
+	#define OS_LIT(x) L##x
 #else
-typedef char OsChar;
+typedef char Char;
 
-#define OS_LIT(x) x
+	#define OS_LIT(x) x
 #endif
 
 
-typedef std::basic_string<OsChar> OsString;
+typedef std::basic_string<Char> String;
+
+
+String getProgramDir();
+
+}	// namespace Os
 
 }	// namespace Vatee

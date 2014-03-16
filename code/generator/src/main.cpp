@@ -10,7 +10,11 @@ Distributed under the Boost Software License, Version 1.0.
 #include "generator.hpp"
 
 
+#ifdef OS_WIN
+int wmain(int /*argc*/, wchar_t * /*argv_p*/[])
+#else
 int main(int /*argc*/, char * /*argv_p*/[])
+#endif
 {
 	Vatee::Config config;
 	Vatee::Generator generator(config);
