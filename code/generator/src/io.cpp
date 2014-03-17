@@ -62,28 +62,28 @@ const FileWriter::Controller
 
 
 FileWriter::FileWriter(const Config &config)
-	: directory(config.getDestDir() + "/")
+	: directory(config.getDestDir() + L"\\")
 	, oneIndent(computeIndentString(config.getIndentSpaceCount()))
 	, newline(computeNewlineString(config.getNewlineStyle()))
 {}
 //--------------------------------------------------------------------------------------------------
-void FileWriter::open(const std::string &fileName, const std::string &subDirectory)
+void FileWriter::open(const Os::String &fileName, const Os::String &subDirectory)
 {
-	std::ostringstream pathConstructor;
+	std::basic_ostringstream<Os::Char> pathConstructor;
 	pathConstructor << directory;
 	if (!subDirectory.empty())
-		pathConstructor << subDirectory << '/';
+		pathConstructor << subDirectory << OS_LIT('\\');
 	{
-		auto dirName = pathConstructor.str();
+		Os::String dirName = pathConstructor.str();
 		if (!makeDirectory(dirName)) {
-			throw std::ios_base::failure("Error creating directory " + dirName);
+			throw std::ios_base::failure("Error creating directory " + Os::lossyNarrow(dirName));
 		}
 	}
 	pathConstructor << fileName;
-	std::string fullPath = pathConstructor.str();
+	Os::String fullPath = pathConstructor.str();
 	file.open(fullPath.c_str(), std::ios::binary);
 	if (!file) {
-		throw std::ios_base::failure("Error opening " + fullPath);
+		throw std::ios_base::failure("Error opening " + Os::lossyNarrow(fullPath));
 	}
 }
 //--------------------------------------------------------------------------------------------------

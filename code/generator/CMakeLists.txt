@@ -33,5 +33,6 @@ add_executable(generate_vatee
 	src/io.cpp
 	src/main.cpp
 	src/os.hpp
+	src/os${OsSuffix}.hpp
 	src/os${OsSuffix}.cpp
 )

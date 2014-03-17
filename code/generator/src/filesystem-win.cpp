@@ -7,10 +7,11 @@ Distributed under the Boost Software License, Version 1.0.
 #include "common.hpp"
 
 #include "filesystem.hpp"
+#include "os-win.hpp"
 
 #include <Windows.h>
 
-#include <wchar.h>
+#include <cwchar>
 
 
 namespace Vatee {
@@ -22,14 +23,13 @@ namespace Vatee {
 //
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-std::wstring getFullPath(std::wstring path)
+Os::String getFullPath(Os::String path)
 {
 	std::replace(path.begin(), path.end(), L'/', L'\\');
-	const size_t maxPathLength = 32767;
 	{
-		wchar_t *buffer = _wfullpath(NULL, path.c_str(), maxPathLength);
+		Os::Char *buffer = _wfullpath(NULL, path.c_str(), Os::maxPathLength);
 		if (!buffer) {
-			return std::wstring();
+			return Os::String();
 		}
 		try {
 			path = buffer;
@@ -50,7 +50,7 @@ std::wstring getFullPath(std::wstring path)
 //
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-bool makeDirectory(OsString directory)
+bool makeDirectory(Os::String directory)
 {
 	directory = getFullPath(directory);
 	if (directory.empty()) {
@@ -58,19 +58,21 @@ bool makeDirectory(OsString directory)
 	}
 	assert(directory.size() >= 2);
 	size_t idxSep;
+	const Os::String *prefix;
 	if (directory[1] == L':') {
+		prefix = &Os::rawPathPrefix;
 		idxSep = directory.find(L'\\', 3);
 	} else {
 		assert(directory[0] == L'\\' && directory[1] == L'\\');
+		prefix = &Os::rawPathUncPrefix;
 		idxSep = directory.find(L'\\', 2);
 		if (idxSep == directory.npos) {
 			return false;
 		}
 		idxSep = directory.find(L'\\', idxSep + 1);
 	}
-	const std::wstring utfPrefix(L"\\\\?\\");
-	directory = utfPrefix + directory;
-	idxSep += utfPrefix.size();
+	directory = *prefix + directory;
+	idxSep += prefix->size();
 	std::vector<size_t> separators;
 	while (idxSep != directory.npos) {
 		separators.push_back(idxSep);

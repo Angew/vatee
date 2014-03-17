@@ -9,6 +9,8 @@ Distributed under the Boost Software License, Version 1.0.
 
 #include "config.hpp"
 
+#include "os.hpp"
+
 
 namespace Vatee {
 
@@ -22,7 +24,7 @@ namespace Vatee {
 class FileWriter
 {
 	std::ofstream file;
-	std::string directory;
+	Os::String directory;
 	std::string oneIndent, currentIndent, newline;
 
 public:
@@ -30,7 +32,7 @@ public:
 
 	explicit FileWriter(const Config &config);
 
-	void open(const std::string &fileName, const std::string &subDirectory = std::string());
+	void open(const Os::String &fileName, const Os::String &subDirectory = Os::String());
 
 	void close();
 

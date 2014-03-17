@@ -1,0 +1,50 @@
+/*
+Copyright Petr Kmoch 2014.
+Distributed under the Boost Software License, Version 1.0.
+(See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+*/
+
+#include "common.hpp"
+
+#include "os-win.hpp"
+
+#include <windows.h>
+
+
+namespace Vatee {
+
+namespace Os {
+
+namespace {
+
+String getProgramDir_init()
+{
+	Char buffer[maxPathLength];
+	size_t len = GetModuleFileNameW(NULL, buffer, maxPathLength);
+	if (!len)
+		return L".";
+	Char *from = buffer, *to = buffer + len;
+	assert(*to == 0);
+	if (len >= rawPathPrefix.size() && std::equal(rawPathPrefix.begin(), rawPathPrefix.end(), from)) {
+		from += rawPathPrefix.size();
+		if (len >= rawPathUncPrefix.size() && std::equal(rawPathUncInfix.begin(), rawPathUncInfix.end(), from)) {
+			// keep the leading backslashes
+			from += rawPathUncInfix.size() - 2;
+			*from = L'\\';
+		}
+	}
+	return String(from, to);
+}
+
+}	// namespace
+
+
+String getProgramDir()
+{
+	static const String dir = getProgramDir_init();
+	return dir;
+}
+
+}	//namespace Os
+
+}	//namespace Vatee

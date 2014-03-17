@@ -27,6 +27,8 @@ typedef std::basic_string<Char> String;
 
 String getProgramDir();
 
+std::string lossyNarrow(const String &string);
+
 }	// namespace Os
 
 }	// namespace Vatee
