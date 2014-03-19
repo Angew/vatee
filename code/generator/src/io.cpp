@@ -62,7 +62,7 @@ const FileWriter::Controller
 
 
 FileWriter::FileWriter(const Config &config)
-	: directory(config.getDestDir() + L"\\")
+	: directory(config.getDestDir() + OS_LIT("\\"))
 	, oneIndent(computeIndentString(config.getIndentSpaceCount()))
 	, newline(computeNewlineString(config.getNewlineStyle()))
 {}
@@ -76,14 +76,14 @@ void FileWriter::open(const Os::String &fileName, const Os::String &subDirectory
 	{
 		Os::String dirName = pathConstructor.str();
 		if (!makeDirectory(dirName)) {
-			throw std::ios_base::failure("Error creating directory " + Os::lossyNarrow(dirName));
+			throw std::ios_base::failure("Error creating directory " + Os::LossyNarrow()(dirName));
 		}
 	}
 	pathConstructor << fileName;
 	Os::String fullPath = pathConstructor.str();
 	file.open(fullPath.c_str(), std::ios::binary);
 	if (!file) {
-		throw std::ios_base::failure("Error opening " + Os::lossyNarrow(fullPath));
+		throw std::ios_base::failure("Error opening " + Os::LossyNarrow()(fullPath));
 	}
 }
 //--------------------------------------------------------------------------------------------------

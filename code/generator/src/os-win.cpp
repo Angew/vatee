@@ -44,6 +44,25 @@ String getProgramDir()
 	static const String dir = getProgramDir_init();
 	return dir;
 }
+//--------------------------------------------------------------------------------------------------
+// Lossy narrow
+//--------------------------------------------------------------------------------------------------
+char LossyNarrow::operator() (Char c) const
+{
+	typedef std::numeric_limits<char> limit;
+	if (c > limit::max() || c < limit::min())
+		return '?';
+	else
+		return static_cast<char>(c);
+}
+//--------------------------------------------------------------------------------------------------
+std::string LossyNarrow::operator() (const String &string) const
+{
+	std::string result;
+	result.reserve(string.size());
+	std::transform(string.begin(), string.end(), std::back_inserter(result), *this);
+	return result;
+}
 
 }	//namespace Os
 

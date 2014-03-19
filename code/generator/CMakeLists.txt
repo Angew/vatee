@@ -14,7 +14,7 @@ endif()
 
 if(WIN32)
 	set(OsSuffix -win)
-	add_definitions(-DOS_WIN -D_UNICODE)
+	add_definitions(-DOS_WIN -D_UNICODE -DNOMINMAX -D_SCL_SECURE_NO_WARNINGS)
 else()
 	set(OsSuffix -posix)
 	add_definitions(-DOS_POSIX)

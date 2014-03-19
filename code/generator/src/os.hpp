@@ -27,7 +27,11 @@ typedef std::basic_string<Char> String;
 
 String getProgramDir();
 
-std::string lossyNarrow(const String &string);
+struct LossyNarrow
+{
+	char operator() (Char c) const;
+	std::string operator() (const String &string) const;
+};
 
 }	// namespace Os
 
