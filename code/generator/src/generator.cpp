@@ -20,14 +20,14 @@ void Generator::generatePack(size_t idxPack, const std::string &packName)
 void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
 {
 	using namespace FileWriterControllers;
-	std::ostringstream header;
+	std::stringstream header;
 	header << "pack";
 	if (!packName.empty()) {
 		header << idxPack;
 	}
 	header << ".hpp";
 	std::string headerName = header.str();
-	writer.open(headerName);
+	writer.open(Os::convert7BitAscii(headerName));
 	writeFileHeader();
 	writeIncludeGuard(headerName);
 	writeInclude(Internal, "compiler_version.hpp");

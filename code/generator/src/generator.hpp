@@ -24,12 +24,20 @@ class Generator
 		Internal, Public
 	};
 
+	//! Top-level function to generate entire pack.
+	/*!
+		\param packName
+			Suffix used as pack name in identifiers and file names.
+	*/
 	void generatePack(size_t idxPack, const std::string &packName);
 
+	//! Generates public header file of the pack.
 	void generatePackPublic(size_t idxPack, const std::string &packName);
 
+	//! Generates internal header file of the pack.
 	void generatePackInternal(size_t idxPack, const std::string &packName);
 
+	//! Writes legal info comment file header.
 	void writeFileHeader();
 
 	void writeIncludeGuard(std::string headerName, std::string scope = std::string());

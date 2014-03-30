@@ -33,6 +33,10 @@ struct LossyNarrow
 	std::string operator() (const String &string) const;
 };
 
+
+String convert7BitAscii(const std::string &string);
+std::string convert7BitAscii(const String &string);
+
 }	// namespace Os
 
 }	// namespace Vatee
