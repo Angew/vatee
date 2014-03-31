@@ -40,8 +40,10 @@ class Generator
 	//! Writes legal info comment file header.
 	void writeFileHeader();
 
+	//! Writes macro-based include guard.
 	void writeIncludeGuard(std::string headerName, std::string scope = std::string());
 
+	//! Writes a #include directive.
 	void writeInclude(HeaderType headerType, const std::string &headerName);
 
 	void writeExpandMacros(const std::string &packName);
