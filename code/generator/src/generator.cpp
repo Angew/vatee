@@ -53,7 +53,7 @@ void Generator::generatePackInternal(size_t idxPack, const std::string &packName
 	}
 	header << ".hpp";
 	std::string headerName = header.str();
-	writer.open(headerName, "internal");
+	writer.open(Os::convert7BitAscii(headerName), OS_LIT("internal"));
 	writeFileHeader();
 	writeEmulation(packName);
 	writer.close();
@@ -220,14 +220,14 @@ void Generator::writeEmulation(const std::string &packName)
 void Generator::writeOneEmulation(const std::string &packName, size_t packSize)
 {
 	using namespace FileWriterControllers;
-	writer << "#define VATEE_IF_NONEMPTY" << packName;
+	writer << "#define VATEE_IF_NONEMPTY" << packName << "(...)";
 	if (packSize > 0) {
 		writer << " __VA_ARGS__";
 	}
 	writer << nl;
 	writer << "#define VATEE_NONEMPTY" << packName << "_COMMA";
 	if (packSize > 0) {
-		writer << ",";
+		writer << " ,";
 	}
 	writer << nl;
 	writer << "#define VATEE_PACKSIZE" << packName << ' ' << packSize << nl;

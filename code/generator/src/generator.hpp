@@ -46,8 +46,10 @@ class Generator
 	//! Writes a #include directive.
 	void writeInclude(HeaderType headerType, const std::string &headerName);
 
+	//! Writes all VATEE_EXPAND_* macro definitions.
 	void writeExpandMacros(const std::string &packName);
 
+	//! Writes a particular variant of VATEE_EXPAND_* macros.
 	void writeConfiguredExpandMacros(
 		const std::string &packName
 		, const std::string &namePrefix
