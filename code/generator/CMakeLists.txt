@@ -8,13 +8,13 @@
 
 if(MSVC)
 	add_compile_options(/Yucommon.hpp /W4 /WX /wd4355)
-	add_definitions(-DVATEE_GENERATOR_DEFAULT_DEST_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
+	add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 	set_property(SOURCE src/common.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " /Yccommon.hpp")
 endif()
 
 if(WIN32)
 	set(OsSuffix -win)
-	add_definitions(-DOS_WIN -D_UNICODE -DNOMINMAX -D_SCL_SECURE_NO_WARNINGS)
+	add_definitions(-DOS_WIN -D_UNICODE -DNOMINMAX)
 else()
 	set(OsSuffix -posix)
 	add_definitions(-DOS_POSIX)

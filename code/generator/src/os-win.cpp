@@ -33,6 +33,7 @@ String getProgramDir_init()
 			*from = L'\\';
 		}
 	}
+	// ToDo: Cut program name here
 	return String(from, to);
 }
 
