@@ -26,20 +26,11 @@ namespace Vatee {
 Os::String getFullPath(Os::String path)
 {
 	std::replace(path.begin(), path.end(), L'/', L'\\');
-	{
-		Os::Char *buffer = _wfullpath(NULL, path.c_str(), Os::maxPathLength);
-		if (!buffer) {
-			return Os::String();
-		}
-		try {
-			path = buffer;
-		} catch (...) {
-			free(buffer);
-			throw;
-		}
-		free(buffer);
+	std::unique_ptr<Os::Char[], decltype(&free)> buffer(_wfullpath(NULL, path.c_str(), Os::maxPathLength), &free);
+	if (!buffer) {
+		return Os::String();
 	}
-	return path;
+	return buffer.get();
 }
 
 
@@ -80,7 +71,7 @@ bool makeDirectory(Os::String directory)
 	}
 	size_t retries = 0;
 	const size_t maxRetries = 5;
-	for (std::vector<size_t>::const_iterator itSep = separators.begin(); itSep != separators.end();) {
+	for (auto itSep = separators.begin(); itSep != separators.end();) {
 		directory[*itSep] = 0;
 		bool ok = !!CreateDirectoryW(directory.c_str(), NULL);
 		if (!ok) {

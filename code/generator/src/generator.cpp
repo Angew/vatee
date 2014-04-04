@@ -26,7 +26,7 @@ void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
 		header << idxPack;
 	}
 	header << ".hpp";
-	std::string headerName = header.str();
+	auto headerName = header.str();
 	writer.open(Os::convert7BitAscii(headerName));
 	writeFileHeader();
 	writeIncludeGuard(headerName);
@@ -52,7 +52,7 @@ void Generator::generatePackInternal(size_t idxPack, const std::string &packName
 		header << idxPack;
 	}
 	header << ".hpp";
-	std::string headerName = header.str();
+	auto headerName = header.str();
 	writer.open(Os::convert7BitAscii(headerName), OS_LIT("internal"));
 	writeFileHeader();
 	writeEmulation(packName);
@@ -81,7 +81,7 @@ void Generator::writeIncludeGuard(std::string headerName, std::string scope)
 		headerName.erase(idxPeriod);
 	}
 	assert(!headerName.empty());
-	const std::ctype<char> &ctype = std::use_facet<std::ctype<char>>(std::locale::classic());
+	const auto &ctype = std::use_facet<std::ctype<char>>(std::locale::classic());
 	ctype.toupper(&headerName[0], &headerName[0] + headerName.size());
 	if (!scope.empty())
 		scope.append("_");
@@ -137,7 +137,7 @@ void Generator::writeConfiguredExpandMacros(
 	using namespace FileWriterControllers;
 	std::ostringstream macroNameGen;
 	macroNameGen << "VATEE_" << namePrefix << "EXPAND" << packName << '_' << nameKind;
-	std::string macroName = macroNameGen.str();
+	auto macroName = macroNameGen.str();
 	for (size_t components = (after ? 1 : 2); components <= config.getMaxExpandComponents(); ++components) {
 		writeExpandMacro(macroName, components, packName, valuePrefix, after);
 		writer << nl;

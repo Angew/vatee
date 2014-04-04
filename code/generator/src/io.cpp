@@ -74,14 +74,14 @@ void FileWriter::open(const Os::String &fileName, const Os::String &subDirectory
 	if (!subDirectory.empty())
 		pathConstructor << subDirectory << OS_LIT('\\');
 	{
-		Os::String dirName = pathConstructor.str();
+		auto dirName = pathConstructor.str();
 		if (!makeDirectory(dirName)) {
 			throw std::ios_base::failure("Error creating directory " + Os::LossyNarrow()(dirName));
 		}
 	}
 	pathConstructor << fileName;
-	Os::String fullPath = pathConstructor.str();
-	file.open(fullPath.c_str(), std::ios::binary);
+	auto fullPath = pathConstructor.str();
+	file.open(fullPath, std::ios::binary);
 	if (!file) {
 		throw std::ios_base::failure("Error opening " + Os::LossyNarrow()(fullPath));
 	}
