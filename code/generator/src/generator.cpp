@@ -220,6 +220,7 @@ void Generator::writeEmulation(const std::string &packName)
 void Generator::writeOneEmulation(const std::string &packName, size_t packSize)
 {
 	using namespace FileWriterControllers;
+	writer << "// Size " << packSize << nl << nl;
 	writer << "#define VATEE_IF_NONEMPTY" << packName << "(...)";
 	if (packSize > 0) {
 		writer << " __VA_ARGS__";

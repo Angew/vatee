@@ -21,10 +21,12 @@ String getProgramDir_init()
 {
 	Char buffer[maxPathLength];
 	size_t len = GetModuleFileNameW(NULL, buffer, maxPathLength);
-	if (!len)
+	if (!len) {
 		return L".";
+	}
 	Char *from = buffer, *to = buffer + len;
 	assert(*to == 0);
+	// Strip WinAPI prefixes
 	if (len >= rawPathPrefix.size() && std::equal(rawPathPrefix.begin(), rawPathPrefix.end(), from)) {
 		from += rawPathPrefix.size();
 		if (len >= rawPathUncPrefix.size() && std::equal(rawPathUncInfix.begin(), rawPathUncInfix.end(), from)) {
@@ -33,7 +35,13 @@ String getProgramDir_init()
 			*from = L'\\';
 		}
 	}
-	// ToDo: Cut program name here
+	// Strip program name
+	for (Char *search = to; search != from; --search) {
+		if (*search == L'\\') {
+			to = search;
+			break;
+		}
+	}
 	return String(from, to);
 }
 
@@ -51,10 +59,11 @@ String getProgramDir()
 char LossyNarrow::operator() (Char c) const
 {
 	typedef std::numeric_limits<char> limit;
-	if (c > limit::max() || c < limit::min())
+	if (c > limit::max() || c < limit::min()) {
 		return '?';
-	else
+	} else {
 		return static_cast<char>(c);
+	}
 }
 //--------------------------------------------------------------------------------------------------
 std::string LossyNarrow::operator() (const String &string) const

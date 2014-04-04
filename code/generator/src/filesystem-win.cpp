@@ -78,9 +78,6 @@ bool makeDirectory(Os::String directory)
 		separators.push_back(idxSep);
 		idxSep = directory.find(L'\\', idxSep + 1);
 	}
-	if (separators.back() == directory.size() - 1) {
-		separators.pop_back();
-	}
 	size_t retries = 0;
 	const size_t maxRetries = 5;
 	for (std::vector<size_t>::const_iterator itSep = separators.begin(); itSep != separators.end();) {
