@@ -111,7 +111,7 @@ void Generator::writeExpandMacros(const std::string &packName)
 	);
 	writeConfiguredExpandMacros(
 		packName
-		, "TRAILING_", "VATEE_NONEMPTY" + packName + "_COMMA"
+		, "TRAILING_", "VATEE_NONEMPTY" + packName + "_COMMA "
 		, "AFTER", true
 	);
 	writeConfiguredExpandMacros(
@@ -121,7 +121,7 @@ void Generator::writeExpandMacros(const std::string &packName)
 	);
 	writeConfiguredExpandMacros(
 		packName
-		, "TRAILING_", "VATEE_NONEMPTY" + packName + "_COMMA"
+		, "TRAILING_", "VATEE_NONEMPTY" + packName + "_COMMA "
 		, "BETWEEN", false
 	);
 }
