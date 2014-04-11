@@ -11,10 +11,33 @@ Distributed under the Boost Software License, Version 1.0.
 
 namespace Vatee {
 
+namespace dirInternal {
+
+const auto osName = Os::String(OS_LIT("internal"));
+const auto name = std::string("internal");
+const auto scope = std::string("INTERNAL");
+
+}	//namespace dirInternal
+
+
 void Generator::generatePack(size_t idxPack, const std::string &packName)
 {
 	generatePackPublic(idxPack, packName);
 	generatePackInternal(idxPack, packName);
+}
+//--------------------------------------------------------------------------------------------------
+void Generator::generateExpansion()
+{
+	using namespace FileWriterControllers;
+	auto headerName = std::string("expansion.hpp");
+	writer.open(Os::convert7BitAscii(headerName), dirInternal::osName);
+	writeFileHeader();
+	writeIncludeGuard(headerName, dirInternal::scope);
+	writeMacro_InternalExpandMacro();
+	writer << nl;
+	writeInternalExpands();
+	writeIncludeGuardEnd();
+	writer.close();
 }
 //--------------------------------------------------------------------------------------------------
 void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
@@ -43,17 +66,13 @@ void Generator::generatePackPublic(size_t idxPack, const std::string &packName)
 	writer.close();
 }
 //--------------------------------------------------------------------------------------------------
-void Generator::generatePackInternal(size_t idxPack, const std::string &packName)
+void Generator::generatePackInternal(size_t /*idxPack*/, const std::string &packName)
 {
 	using namespace FileWriterControllers;
 	std::ostringstream header;
-	header << "emulate";
-	if (!packName.empty()) {
-		header << idxPack;
-	}
-	header << ".hpp";
+	header << "emulate" << packName << ".hpp";
 	auto headerName = header.str();
-	writer.open(Os::convert7BitAscii(headerName), OS_LIT("internal"));
+	writer.open(Os::convert7BitAscii(headerName), dirInternal::osName);
 	writeFileHeader();
 	writeEmulation(packName);
 	writer.close();
@@ -97,7 +116,7 @@ void Generator::writeInclude(HeaderType headerType, const std::string &headerNam
 	using namespace FileWriterControllers;
 	writer << "#include \"vatee/";
 	if (headerType == Internal) {
-		writer << "internal/";
+		writer << dirInternal::name << '/';
 	}
 	writer << headerName << '"' << nl;
 }
@@ -197,7 +216,7 @@ void Generator::writeMacro_Emulate(const std::string &packName)
 	using namespace FileWriterControllers;
 	writer
 		<< "#define VATEE_EMULATE" << packName
-		<< "() \"vatee/internal/emulate" << packName << ".hpp\""
+		<< "() \"vatee/" << dirInternal::name << "/emulate" << packName << ".hpp\""
 		<< nl
 	;
 }
@@ -241,6 +260,56 @@ void Generator::writeOneEmulation(const std::string &packName, size_t packSize)
 	;
 }
 //--------------------------------------------------------------------------------------------------
+void Generator::writeMacro_InternalExpandMacro()
+{
+	using namespace FileWriterControllers;
+	writer
+		<< "#define VATEE_INTERNAL_EXPAND_MACRO(vatee_packsize, vatee_args)" << mle << tab
+		<< indent << "VATEE_INTERNAL_EXPAND_MACRO_I(vatee_packsize, vatee_args)" << nl << untab
+	;
+	writer << nl;
+	writer
+		<< "#define VATEE_INTERNAL_EXPAND_MACRO_I(vatee_packsize, vatee_args)" << mle << tab
+		<< indent << "VATEE_INTERNAL_EXPAND_ ## vatee_packsize ## _ ## vatee_args" << nl << untab
+	;
+	writer << nl;
+}
+//--------------------------------------------------------------------------------------------------
+void Generator::writeInternalExpands()
+{
+	for (size_t arity = 0; arity <= config.getMaxArity(); ++arity) {
+		for (size_t components = 2; components <= config.getMaxExpandComponents(); ++components) {
+			writeOneInternalExpand(arity, components);
+		}
+	}
+}
+//--------------------------------------------------------------------------------------------------
+void Generator::writeOneInternalExpand(const size_t arity, const size_t components)
+{
+	using namespace FileWriterControllers;
+	writer << "#define VATEE_INTERNAL_EXPAND_" << arity << '_' << components << "(vatee_arg0";
+	for (size_t i = 1; i < components; ++i) {
+		writer << ", vatee_arg" << i;
+	}
+	writer << ')' << tab;
+	{
+		bool first = true;
+		for (size_t idxArg = 0; idxArg < arity; ++idxArg) {
+			writer << mle << indent;
+			if (first) {
+				first = false;
+			} else {
+				writer << ", ";
+			}
+			for (size_t idxComp = 0; idxComp < components - 1; ++idxComp) {
+				writer << "vatee_arg" << idxComp << " ## " << idxArg << " ";
+			}
+			writer << "vatee_arg" << components - 1 << "()";
+		}
+	}
+	writer << nl << untab << nl;
+}
+//--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
 //
 // Public
@@ -259,6 +328,7 @@ void Generator::run()
 		s << '_' << idxPack;
 		generatePack(idxPack, s.str());
 	}
+	generateExpansion();
 }
 
 }	//namespace Vatee

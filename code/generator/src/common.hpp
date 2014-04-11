@@ -12,6 +12,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <cstddef>
 #include <fstream>
 #include <functional>
+#include <iterator>
 #include <locale>
 #include <memory>
 #include <sstream>

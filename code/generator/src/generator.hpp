@@ -31,6 +31,9 @@ class Generator
 	*/
 	void generatePack(size_t idxPack, const std::string &packName);
 
+	//! Top-level function to generate internal expansion header.
+	void generateExpansion();
+
 	//! Generates public header file of the pack.
 	void generatePackPublic(size_t idxPack, const std::string &packName);
 
@@ -81,6 +84,12 @@ class Generator
 	void writeEmulation(const std::string &packName);
 
 	void writeOneEmulation(const std::string &packName, size_t packSize);
+
+	void writeMacro_InternalExpandMacro();
+
+	void writeInternalExpands();
+
+	void writeOneInternalExpand(size_t arity, size_t components);
 
 public:
 	explicit Generator(Config config);
